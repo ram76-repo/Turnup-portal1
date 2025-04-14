@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="pages\" />
     <Folder Include="tests\" />
     <Folder Include="utilities\" />
   </ItemGroup>
