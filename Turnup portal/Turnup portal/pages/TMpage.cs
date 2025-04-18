@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NUnit.Framework;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
+using Turnup_portal.utilities;
 
 namespace Turnup_portal.pages
 {
@@ -12,23 +15,41 @@ namespace Turnup_portal.pages
         public void AddNewTimeRecord(IWebDriver driver)
         {
             //creating new time record
+            try
+            {
+                IWebElement createnew = driver.FindElement(By.XPath("//*[@id=\"container\"]/p/a"));
+                createnew.Click();
+            }
+            
+            catch (Exception ex)
+            {
+                Assert.Fail("Create new button not found");
+            }
 
-            IWebElement createnew = driver.FindElement(By.XPath("//*[@id=\"container\"]/p/a"));
-            createnew.Click();
-            Thread.Sleep(3000);
+            Thread.Sleep(5000);
 
-            IWebElement typecodedropdown = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[1]/div/span[1]/span/span[2]"));
-            typecodedropdown.Click();
-            Thread.Sleep(2000);
+            try
+            {
+                IWebElement typecodedropdown = driver.FindElement(By.ClassName("k-input"));
+                typecodedropdown.Click();
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("Type code dropdown not found");
+            }
 
-            IWebElement timetypecode = driver.FindElement(By.XPath("//*[@id=\"TypeCode_listbox\"]/li[2]"));
+            Thread.Sleep(5000);
+            IWebElement timetypecode = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[1]/div/span[1]/span/span[1]"));
             timetypecode.Click();
-
+                        
             IWebElement code = driver.FindElement(By.Id("Code"));
             code.SendKeys("XYZ123");
+                    
 
             IWebElement desc = driver.FindElement(By.Id("Description"));
             desc.SendKeys("New record");
+
+            Thread.Sleep(2000);
 
             IWebElement priceclick = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[4]/div/span[1]/span/input[1]"));
             priceclick.Click();
@@ -38,10 +59,14 @@ namespace Turnup_portal.pages
 
             IWebElement saveButton = driver.FindElement(By.XPath("//*[@id=\"SaveButton\"]"));
             saveButton.Click();
-            Thread.Sleep(3000);
+
+            //Validating new record addition
+
+            Thread.Sleep(2000);
 
             IWebElement navigateToLastPage = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
             navigateToLastPage.Click();
+
             Thread.Sleep(2000);
 
             IWebElement recordCheck = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]"));
@@ -59,12 +84,20 @@ namespace Turnup_portal.pages
         {
             //Edit record
 
+            wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[5]/a[1]", 20);
+
             IWebElement editButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[5]/a[1]"));
             editButton.Click();
 
+            wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"TimeMaterialEditForm\"]/div/div[1]/div/span[1]/span/span[2]", 20);
+
             IWebElement editTypeCodeDropDown = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[1]/div/span[1]/span/span[2]"));
             editTypeCodeDropDown.Click();
-            Thread.Sleep(3000);
+
+            wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"TypeCode_option_selected\"]", 20);
+
+            IWebElement selectTypeCode = driver.FindElement(By.XPath("//*[@id=\"TypeCode_option_selected\"]"));
+            selectTypeCode.Click();
 
             IWebElement editCode = driver.FindElement(By.Id("Code"));
             editCode.Clear();
@@ -76,24 +109,27 @@ namespace Turnup_portal.pages
 
             IWebElement priceTagOverlap = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[4]/div/span[1]/span/input[1]"));
             priceTagOverlap.Click();
-            Thread.Sleep(1000);
 
+            
             IWebElement materialPrice = driver.FindElement(By.Id("Price"));
             materialPrice.Clear();
 
             IWebElement priceTagOverlap1 = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[4]/div/span[1]/span/input[1]"));
             priceTagOverlap1.Click();
-            Thread.Sleep(1000);
+
             materialPrice.SendKeys("2000");
 
             IWebElement saveEditDataButton = driver.FindElement(By.XPath("//*[@id=\"SaveButton\"]"));
             saveEditDataButton.Click();
-            Thread.Sleep(2000);
 
             //Validating the edited record
 
+            wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[4]/a[4]/span", 20);
+
             IWebElement navigate = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
             navigate.Click();
+
+            wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]", 20);
 
             IWebElement checkrecord = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]"));
 
@@ -114,12 +150,11 @@ namespace Turnup_portal.pages
             IWebElement navigateToLastRecord = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
             navigateToLastRecord.Click();
 
-            Thread.Sleep(2000);
+            wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[5]/a[2]", 20);
 
             IWebElement deleteButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[5]/a[2]"));
             deleteButton.Click();
-            Thread.Sleep(2000);
-
+            
             driver.SwitchTo().Alert().Accept();
 
             //Validating the delete action

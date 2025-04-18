@@ -25,11 +25,6 @@ public class Program
         TMpage deleteRecord = new TMpage();
         deleteRecord.DeleteTimeRecord(driver);
 
-        
-
-        
-
-        
 
         
         
