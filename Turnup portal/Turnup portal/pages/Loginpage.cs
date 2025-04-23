@@ -14,6 +14,7 @@ namespace Turnup_portal.pages
         public void LoginActions(IWebDriver driver)
         {
             driver.Navigate().GoToUrl("http://horse.industryconnect.io/");
+            driver.Manage().Window.Maximize();
 
             //login validation
 
@@ -23,7 +24,7 @@ namespace Turnup_portal.pages
             IWebElement password = driver.FindElement(By.Id("Password"));
             password.SendKeys("123123");
 
-            wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"loginForm\"]/form/div[3]/input[1]", 10);
+            wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"loginForm\"]/form/div[3]/input[1]", 30);
 
             IWebElement login = driver.FindElement(By.XPath("//*[@id=\"loginForm\"]/form/div[3]/input[1]"));
             login.Click();

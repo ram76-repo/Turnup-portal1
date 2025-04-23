@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using SeleniumExtras.WaitHelpers;
 using Turnup_portal.utilities;
 
 namespace Turnup_portal.pages
@@ -15,33 +16,23 @@ namespace Turnup_portal.pages
         public void AddNewTimeRecord(IWebDriver driver)
         {
             //creating new time record
-            try
-            {
-                IWebElement createnew = driver.FindElement(By.XPath("//*[@id=\"container\"]/p/a"));
-                createnew.Click();
-            }
-            
-            catch (Exception ex)
-            {
-                Assert.Fail("Create new button not found");
-            }
 
-            Thread.Sleep(5000);
+            Thread.Sleep(10000);
 
-            try
-            {
-                IWebElement typecodedropdown = driver.FindElement(By.ClassName("k-input"));
-                typecodedropdown.Click();
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail("Type code dropdown not found");
-            }
+            IWebElement createnew = driver.FindElement(By.XPath("//*[@id=\"container\"]/p/a"));
+            createnew.Click();
 
-            Thread.Sleep(5000);
-            IWebElement timetypecode = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[1]/div/span[1]/span/span[1]"));
+            Thread.Sleep(15000);
+
+            IWebElement typecodedropdown = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[1]/div/span[1]/span"));
+            typecodedropdown.Click();
+
+            wait.WaitToBeVisible(driver, "XPath", "//*[@id=\"TypeCode_listbox\"]/li[2]", 30);
+
+            IWebElement timetypecode = driver.FindElement(By.XPath("//*[@id=\"TypeCode_listbox\"]/li[2]"));
             timetypecode.Click();
-                        
+
+                                   
             IWebElement code = driver.FindElement(By.Id("Code"));
             code.SendKeys("XYZ123");
                     
@@ -49,40 +40,52 @@ namespace Turnup_portal.pages
             IWebElement desc = driver.FindElement(By.Id("Description"));
             desc.SendKeys("New record");
 
-            Thread.Sleep(2000);
+            
 
             IWebElement priceclick = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[4]/div/span[1]/span/input[1]"));
             priceclick.Click();
 
+            wait.WaitToBeVisible(driver, "Id", "Price", 30);
+
             IWebElement price = driver.FindElement(By.Id("Price"));
             price.SendKeys("3000");
 
-            IWebElement saveButton = driver.FindElement(By.XPath("//*[@id=\"SaveButton\"]"));
+            wait.WaitToBeClickable(driver, "Id", "SaveButton", 30);
+
+            IWebElement saveButton = driver.FindElement(By.Id("SaveButton"));
             saveButton.Click();
 
             //Validating new record addition
 
-            Thread.Sleep(2000);
+          
+            wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[4]/a[4]/span", 30);
 
             IWebElement navigateToLastPage = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
             navigateToLastPage.Click();
 
-            Thread.Sleep(2000);
+            wait.WaitToBeVisible(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]", 20);
 
             IWebElement recordCheck = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]"));
 
+           
             if (recordCheck.Text == "XYZ123")
             {
-                Console.WriteLine("Record added successfully");
+                Assert.Pass("Record added successfully");
             }
             else
             {
-                Console.WriteLine("Record not added");
+                Assert.Fail("Record not added");
             }
         }
         public void EditTimeRecord(IWebDriver driver)
         {
             //Edit record
+
+            wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[4]/a[4]/span", 30);
+
+            IWebElement navigateToLastPage = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
+            navigateToLastPage.Click();
+
 
             wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[5]/a[1]", 20);
 
@@ -94,8 +97,7 @@ namespace Turnup_portal.pages
             IWebElement editTypeCodeDropDown = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[1]/div/span[1]/span/span[2]"));
             editTypeCodeDropDown.Click();
 
-            wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"TypeCode_option_selected\"]", 20);
-
+            
             IWebElement selectTypeCode = driver.FindElement(By.XPath("//*[@id=\"TypeCode_option_selected\"]"));
             selectTypeCode.Click();
 
@@ -124,22 +126,21 @@ namespace Turnup_portal.pages
 
             //Validating the edited record
 
-            wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[4]/a[4]/span", 20);
+            wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[4]/a[4]/span", 30);
 
             IWebElement navigate = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
             navigate.Click();
 
-            wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]", 20);
-
+            
             IWebElement checkrecord = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]"));
 
             if (checkrecord.Text == "ABC123")
             {
-                Console.WriteLine("Record edited successfully");
+                Assert.Pass("Record edited successfully");
             }
             else
             {
-                Console.WriteLine("Edit unsuccessful");
+                Assert.Fail("Edit unsuccessful");
             }
 
         }
@@ -150,7 +151,7 @@ namespace Turnup_portal.pages
             IWebElement navigateToLastRecord = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
             navigateToLastRecord.Click();
 
-            wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[5]/a[2]", 20);
+            wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[5]/a[2]", 30);
 
             IWebElement deleteButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[5]/a[2]"));
             deleteButton.Click();
@@ -159,7 +160,7 @@ namespace Turnup_portal.pages
 
             //Validating the delete action
 
-            Thread.Sleep(2000);
+            wait.WaitToBeVisible(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[4]/a[1]/span", 30);
 
             IWebElement first = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[1]/span"));
             first.Click();
@@ -171,11 +172,11 @@ namespace Turnup_portal.pages
             
             if (lastRecord.Text == "ABC123")
             {
-                Console.WriteLine("Delete unsuccessful");
+                Assert.Pass("Record deleted successfully");
             }
             else
             {
-                Console.WriteLine("Record deleted successfully");
+                Assert.Fail("Record deletion unsuccessful");
             }
         }
     }
